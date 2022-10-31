@@ -42,6 +42,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("%s. [%b] %s, ", identifier, (done ? "X" : " "), descriptionTask);
+        return String.format("%s. [%s] %s ", identifier, (done ? "X" : " "), descriptionTask);
     }
 }
