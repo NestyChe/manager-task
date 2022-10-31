@@ -1,37 +1,47 @@
 package org.example;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Task {
-    private final String descriptionTask;
-    private final char states;
-    private int identifier;
+
+
+    private String descriptionTask;
+    private boolean done;
+    private final String identifier;
+    private static int count = 0;
+
+    public static List<Task> list = new ArrayList<>();
 
     public Task(String description) {
+        count += 1;
         this.descriptionTask = description;
-        this.identifier += 1;
-        this.states = ' ';
+        this.identifier = String.valueOf(count);
+
     }
 
-
-    public Task( int identifier, char states, String description) {
-        this.descriptionTask = description;
-        this.states = states;
-        this.identifier = identifier;
+    public void setDescriptionTask(String descriptionTask) {
+        this.descriptionTask = descriptionTask;
     }
-
-    public String getTasks() {
+    public String getTask() {
         return descriptionTask;
     }
 
-    public char getStates() {
-        return states;
+    public boolean getStates() {
+        return done;
     }
 
-    public int getIdentifier() {
+    public String getIdentifier() {
         return identifier;
     }
 
+    public void invertState() {
+        done = !done;
+    }
+
+
     @Override
     public String toString() {
-        return identifier + ". [" + states + "] " + descriptionTask;
+        return String.format("%s. [%b] %s, ", identifier, (done ? "X" : " "), descriptionTask);
     }
 }
