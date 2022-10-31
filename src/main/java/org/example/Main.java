@@ -16,14 +16,23 @@ public class Main {
                 commands.add(task);
             } else if (command.equals("quit")) {
                 commands.quit();
-            } else if (commands.hasTask()) {
+            } else if (!Task.list.isEmpty()) {
 
                 switch (command) {
+                    case "search":
+                        commands.search(task);
+                        break;
                     case "print":
                         commands.print(task);
                         break;
                     case "toggle":
                         commands.toggle(task);
+                        break;
+                    case "edit":
+                        commands.edit(task);
+                        break;
+                    case "delete":
+                        commands.delete(task);
                         break;
                     default:
                         System.err.println("unknown command");
