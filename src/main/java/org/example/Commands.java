@@ -1,44 +1,73 @@
 package org.example;
+import java.util.NoSuchElementException;
+import java.util.function.Predicate;
 
 public class Commands {
-    private Task task;
+
 
     public void add(String descriptionTask) {
-        if (descriptionTask.length() == 0){
-            System.err.println("input task");
-            return;
+        if (descriptionTask.isEmpty()){
+            ExceptionTask.descriptionExcept();
         }
-        task = new Task(descriptionTask);
+        Task.list.add(new Task(descriptionTask));
     }
 
-    public void print(String descriptionTask) {
-        if (descriptionTask.equals("all")) {
-            System.out.println(task.toString());
-        } else if (descriptionTask.equals("")) {
-            System.out.println(task.getStates() == ' ' ? task.toString() : "");
-        } else {
-            System.err.println("wrong tag");
-        }
+    public void search (String substring) {
+        if (substring.isEmpty()) ExceptionTask.descriptionExcept();
+        else Task.list.stream().filter(t -> t.getTask().contains(substring)).forEach(System.out::println);
     }
-    public void toggle(String descriptionTask) {
-        try {
-            int identifier = Integer.parseInt(descriptionTask);
-            if (task.getIdentifier() == identifier)
-                task = task.getStates() == 'X'
-                        ? new Task(task.getIdentifier(), ' ', task.getTasks())
-                        : new Task(task.getIdentifier(), 'X', task.getTasks());
-            else System.err.println("wrong identifier");
-        } catch (NumberFormatException exception) {
-            System.err.println("input one numeric identifier");
+    public void print(String descriptionTask) {
+        if (!descriptionTask.equals("all") & !descriptionTask.isEmpty()) {
+            System.err.println("wrong tag");
+            return;
         }
-        //}
+        if (descriptionTask.isEmpty()) Task.list.stream().filter(task -> !task.getStates()).forEach(System.out::println);
+        else Task.list.forEach(System.out::println);
+    }
+    public void toggle(String identifier) {
+        action(identifier, id -> {
+            Task task = findTask(identifier);
+            task.invertState();
+            return true;
+        });
+    }
+
+    public void delete(String identifier) {
+        action(identifier, id -> Task.list.remove(findTask(identifier)));
+    }
+
+    public  void edit (String descriptionTask) {
+      try {
+          int indexSpace = descriptionTask.indexOf(" ");
+          String identifier = descriptionTask.substring(0, indexSpace);
+          String newDescription = descriptionTask.substring(indexSpace);
+          findTask(identifier).setDescriptionTask(newDescription);
+       } catch (StringIndexOutOfBoundsException exception) {
+           ExceptionTask.descriptionExcept();
+       } catch (NoSuchElementException exception) {
+          ExceptionTask.wrongInputExcept();
+        }
     }
 
     public void quit() {
         System.exit(0);
     }
 
-    public boolean hasTask() {
-        return task != null;
+    private void action (String id, Predicate<String> action) {
+        if (id.isEmpty()) {
+            ExceptionTask.descriptionExcept();
+            return;
+        }
+        try {
+            action.test(id);
+        } catch (NoSuchElementException exception) {
+        ExceptionTask.wrongInputExcept();
+        }
+    }
+
+    private Task findTask(String id) {
+         return Task.list.stream()
+                .filter(o -> o.getIdentifier().equals(id))
+                .findFirst().orElseThrow();
     }
 }
