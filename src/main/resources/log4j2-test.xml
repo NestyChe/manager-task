@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" monitorInterval="5">
+    <Appenders>
+        <File  name="logfile" fileName="target/log.txt" append="false" immediateFlush="true">
+            <PatternLayout pattern="%d{yy-MMM-dd HH:mm:ss:SSS} [%p] [%c{1}:%L] %-5level %logger{36} - %m%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+
+
+        <Root level="debug">
+            <AppenderRef ref="logfile"/>
+        </Root>
+    </Loggers>
+</Configuration>
+        <!--type="File"-->
