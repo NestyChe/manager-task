@@ -1,9 +1,13 @@
 package org.example;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 public class Commands {
 
+    private static final Logger logger = LoggerFactory.getLogger(Commands.class.getName());
 
     public void add(String descriptionTask) {
         if (descriptionTask.isEmpty()){
@@ -27,7 +31,9 @@ public class Commands {
     public void toggle(String identifier) {
         action(identifier, id -> {
             Task task = findTask(identifier);
+            logger.debug("States was: {}", task.getStates());
             task.invertState();
+            logger.debug("Output, status has become: {}", task.getStates());
             return true;
         });
     }
@@ -37,15 +43,16 @@ public class Commands {
     }
 
     public  void edit (String descriptionTask) {
-      try {
-          int indexSpace = descriptionTask.indexOf(" ");
-          String identifier = descriptionTask.substring(0, indexSpace);
-          String newDescription = descriptionTask.substring(indexSpace);
-          findTask(identifier).setDescriptionTask(newDescription);
-       } catch (StringIndexOutOfBoundsException exception) {
-           ExceptionTask.descriptionExcept();
-       } catch (NoSuchElementException exception) {
-          ExceptionTask.wrongInputExcept();
+        String identifier = null;
+        try {
+            int indexSpace = descriptionTask.indexOf(" ");
+            identifier = descriptionTask.substring(0, indexSpace);
+            String newDescription = descriptionTask.substring(indexSpace);
+            findTask(identifier).setDescriptionTask(newDescription);
+        } catch (StringIndexOutOfBoundsException exception) {
+            ExceptionTask.descriptionExcept();
+        } catch (NoSuchElementException exception) {
+            ExceptionTask.wrongInputExcept(identifier, exception);
         }
     }
 
@@ -61,7 +68,7 @@ public class Commands {
         try {
             action.test(id);
         } catch (NoSuchElementException exception) {
-        ExceptionTask.wrongInputExcept();
+            ExceptionTask.wrongInputExcept(id, exception);
         }
     }
 
